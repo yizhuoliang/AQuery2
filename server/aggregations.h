@@ -93,6 +93,7 @@ decayed_t<VT, T> minw(uint32_t w, const VT<T>& arr) {
 		cache.push_back({ arr[i], i });
 		ret[i] = cache.front().first;
 	}
+	printf("hello??\n");
 	return ret;
 }
 
