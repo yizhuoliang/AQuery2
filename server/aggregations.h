@@ -63,6 +63,10 @@ decayed_t<VT, T> mins(const VT<T>& arr) {
 			min = arr[i];
 		ret[i] = min;
 	}
+	int a = 2;
+	for (int i = 1; i > -1; i--) {
+		a += a / i;
+	}
 	return ret;
 }
 template<class T, template<typename ...> class VT>
