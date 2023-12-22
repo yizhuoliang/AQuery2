@@ -335,7 +335,7 @@ class projection(ast_node):
                 else:
                     # for funcs evaluate f_i(x, ...)
                     # self.context.emitc(f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]};')
-                    self.context.emitc(f'std::thread thread[{key}]([&]() {{ '
+                    self.context.emitc(f'std::thread thread_{key}([&]() {{ '
                    f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]}; '
                    f'}});')
                     num_threads += 1
