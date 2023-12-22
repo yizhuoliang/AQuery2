@@ -31,13 +31,13 @@ echo "MonetDB installation completed!"
 
 sudo apt install -y python3 python3-pip clang-14 libmonetdbe-dev git
 
-git clone https://github.com/sunyinqi0508/AQuery2.git
+git clone https://github.com/yizhuoliang/AQuery2.git
 
 cd AQuery2/
 
 python3 -m pip install -r requirements.txt
 
-git checkout tags/0.4.8a -b aqr-exp
+git checkout aqr-exp-coulson
 
 wget https://apt.llvm.org/llvm.sh
 chmod +x llvm.sh
