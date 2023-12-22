@@ -324,6 +324,7 @@ class Context:
                     headers += '#include ' + h + '\n'
             self.ccode = headers + self.function_head + self.ccode + 'return 0;\n}'
             self.headers = set()
+        print("finalized c code:")
         print(self.ccode)
         return self.ccode
     def __str__(self):
