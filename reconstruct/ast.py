@@ -341,7 +341,7 @@ class projection(ast_node):
                     num_threads += 1
                     print("place A")
         for i in range(num_threads):
-            self.context.emitc(f'thread[{i}].join();')
+            self.context.emitc(f'thread_{i}.join();')
         # print out col_is
         if 'into' not in node:
             self.context.emitc(f'print(*{self.out_table.contextname_cpp});')
