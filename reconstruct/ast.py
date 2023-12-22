@@ -329,7 +329,7 @@ class projection(ast_node):
                     self.context.emitc(
                         f'{self.out_table.contextname_cpp}->get_col<{key}>().initfrom({vid2cname[val[1]]}, "{cols[i].name}");'
                     )
-                    print(f'{self.out_table.contextname_cpp}->get_col<{key}>().initfrom({vid2cname[val[1]]}, "{cols[i].name}");')
+                    print("wowowo!")
                 else:
                     # for funcs evaluate f_i(x, ...)
                     self.context.emitc(f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]};')
