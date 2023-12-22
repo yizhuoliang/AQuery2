@@ -347,7 +347,7 @@ class projection(ast_node):
     def finalize(self):      
         self.context.emitc(f'puts("done.");')
         print("end of code generation:")
-        print(self.ccode);
+        print(self.context.ccode);
 
         if self.parent is None:
             self.context.sql_end()
