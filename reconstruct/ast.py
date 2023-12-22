@@ -314,6 +314,7 @@ class projection(ast_node):
         self.context.emitc(f'auto {self.out_table.contextname_cpp} = new TableInfo<{",".join(out_typenames)}>("{self.out_table.table_name}", {self.outtable_col_names});')
         # TODO: Inject custom group by code here and flag them in proj_map
         # Type of UDFs? Complex UDFs, ones with static vars?
+        num_threads = 0
         if self.group_node is not None and self.group_node.use_sp_gb:
             gb_vartable : Dict[str, Union[str, int]] = deepcopy(self.pyname2cname)
             gb_cexprs : List[str] = []
@@ -321,7 +322,7 @@ class projection(ast_node):
             for key, val in proj_map.items():
                 col_name = 'col_' + base62uuid(6)
                 self.context.emitc(f'decltype(auto) {col_name} = {self.out_table.contextname_cpp}->get_col<{key}>();')
-                print("place 2")
+                print("place B")
                 gb_cexprs.append((col_name, val[2]))
             self.group_node.finalize(gb_cexprs, gb_vartable)
         else:
@@ -333,8 +334,14 @@ class projection(ast_node):
                     print("place C")
                 else:
                     # for funcs evaluate f_i(x, ...)
-                    self.context.emitc(f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]};')
+                    # self.context.emitc(f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]};')
+                    self.context.emitc(f'std::thread thread[{key}]([&]() {{ '
+                   f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]}; '
+                   f'}});')
+                    num_threads += 1
                     print("place A")
+        for i in range(num_threads):
+            self.context.emitc(f'thread[{i}].join();')
         # print out col_is
         if 'into' not in node:
             self.context.emitc(f'print(*{self.out_table.contextname_cpp});')
