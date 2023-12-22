@@ -123,7 +123,7 @@ class Context:
     def new(self):
         self.headers = set(['\"./server/libaquery.h\"', 
                             '\"./server/monetdb_conn.h\"',
-                            '<thread>'])
+                            'thread'])
 
         self.ccode = ''
         self.sql = ''  
