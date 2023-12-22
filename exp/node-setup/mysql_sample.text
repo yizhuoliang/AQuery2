@@ -1,0 +1,80 @@
+sudo mysql -u root -p --local-infile
+
+CREATE TABLE prices (
+    month INT,
+    price INT
+) ENGINE=MEMORY;
+
+LOAD DATA LOCAL INFILE './prices.csv'
+INTO TABLE prices
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+SELECT month,price, avg(price) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) FROM prices;
+
+SHOW VARIABLES LIKE 'tmp_table_size';
+SET tmp_table_size = 1073741824;
+SET max_heap_table_size = 1073741824;
+
+
+
+
+
+// for SQL Server
+sqlcmd -S localhost -U sa -P 'A1234567890a' -No
+
+CREATE TABLE prices (month INT, price INT)
+
+BULK INSERT prices FROM '/users/yliang/AQuery2/prices.csv' WITH (FIELDTERMINATOR = ',', ROWTERMINATOR = '\n', FIRSTROW = 2);
+
+SELECT avg(price) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS moving_avg INTO results FROM prices;
+
+// about enabling in-memory bd
+ALTER DATABASE mydb SET AUTO_CLOSE OFF;
+ALTER DATABASE mydb ADD FILEGROUP myfg CONTAINS MEMORY_OPTIMIZED_DATA;
+ALTER DATABASE mydb ADD FILE (name='liang-sqlserver-file', filename='/users/yliang/sqlserver') TO FILEGROUP myfg;
+CREATE TABLE prices (rownumber INT, month INT, price INT, PRIMARY KEY NONCLUSTERED (rownumber)) WITH (MEMORY_OPTIMIZED=ON, DURABILITY=SCHEMA_ONLY);
+
+
+
+// max in-memory table size is a bit more than 100MB
+
+
+// Postgres
+sudo apt install postgresql
+sudo systemctl start postgresql.service
+sudo vim /etc/postgresql/12/main/postgresql.conf
+sudo systemctl restart postgresql
+sudo -u postgres psql
+CREATE DATABASE mydb;
+\connect mydb
+CREATE UNLOGGED TABLE prices(rownumber INT, month INT, price INT);
+CREATE EXTENSION pg_prewarm;
+COPY prices(rownumber, month, price) FROM '/users/yliang/AQuery2/prices.csv' DELIMITER ',' CSV HEADER;
+SELECT pg_prewarm('prices', 'buffer');
+
+// preloading
+\o /dev/null
+SELECT * FROM prices;
+// testing
+\timing
+SELECT avg(price) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) FROM prices;
+
+
+
+// duckdb
+wget https://open.spotify.com/track/4MwVirVMyerMiHkFomOZay?si=0d7ec8b28f824f7e
+
+CREATE TABLE prices (rownumber INT, month INT, price INT);
+COPY prices FROM '/users/yliang/AQuery2/prices.csv' WITH DELIMITER ',' HEADER;
+.timer on
+CREATE TABLE results AS SELECT avg(price) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) FROM prices;
+
+// clickhouse
+curl https://clickhouse.com/ | sh
+./clickhouse server
+
+CREATE TABLE prices (rownumber INT, month INT, price INT) ENGINE = Memory;
+$ cat /users/yliang/AQuery2/prices.csv | ./clickhouse client --query="INSERT INTO prices FORMAT CSV"
+CREATE TABLE results ENGINE = Memory AS SELECT avg(price) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS avg_price FROM prices;

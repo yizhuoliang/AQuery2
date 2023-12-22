@@ -1,0 +1,5 @@
+CREATE TABLE prices(rownumber int, mont int, price int)
+LOAD DATA INFILE "prices.csv" INTO TABLE prices FIELDS TERMINATED BY ","
+stats
+select avgs(3, price) into results from prices assuming asc mont
+stats
