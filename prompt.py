@@ -424,6 +424,8 @@ def prompt(running = lambda:True, next = lambda:input('> '), state = None):
                     sz = len(qs)
                     payload = (ctypes.c_char_p*sz)(*qs)
                     state.payload = payload
+                    print("Payload info:")
+                    print(type(payload))
                     print(payload)
                     try:
                         state.send(sz, payload)
