@@ -344,7 +344,7 @@ class projection(ast_node):
             self.context.emitc(f'thread_{i}.join();')
         # print out col_is
         if 'into' not in node:
-            self.context.emitc(f'print(*{self.out_table.contextname_cpp});')
+            self.context.emitc(f'//print(*{self.out_table.contextname_cpp});')
         
         if self.outfile:
             self.outfile.finalize()
