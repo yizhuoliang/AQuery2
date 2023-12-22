@@ -336,7 +336,8 @@ class projection(ast_node):
                     # for funcs evaluate f_i(x, ...)
                     # self.context.emitc(f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]};')
                     self.context.emitc(f'std::thread thread_{key}([&]() {{ '
-                   f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]}; '
+                    #{self.out_table.contextname_cpp}->get_col<{key}>() =
+                   f' {val[1]}; '
                    f'}});')
                     num_threads += 1
                     print("place A")
@@ -344,13 +345,14 @@ class projection(ast_node):
             self.context.emitc(f'thread_{i}.join();')
         # print out col_is
         if 'into' not in node:
-            self.context.emitc(f'//print(*{self.out_table.contextname_cpp});')
+            self.context.emitc(f'print(*{self.out_table.contextname_cpp});')
         
         if self.outfile:
             self.outfile.finalize()
 
         if 'into' in node:
-            self.context.emitc(select_into(self, node['into']).ccode)
+            # self.context.emitc(select_into(self, node['into']).ccode)
+            print()
         if not self.distinct:
             self.finalize()
             
