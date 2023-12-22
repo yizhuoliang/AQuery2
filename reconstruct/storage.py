@@ -122,8 +122,8 @@ class TableInfo:
 class Context:
     def new(self):
         self.headers = set(['\"./server/libaquery.h\"', 
-                            '\"./server/monetdb_conn.h\"'],
-                            '\"<thread>\"')
+                            '\"./server/monetdb_conn.h\"',
+                            '\"<thread>\"'])
 
         self.ccode = ''
         self.sql = ''  
