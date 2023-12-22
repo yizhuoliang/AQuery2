@@ -161,6 +161,7 @@ int dll_main(int argc, char** argv, Context* cxt){
                             {
                                 server->exec(n_recvd[i] + 1);
                                 printf("Exec Q%d: %s", i, n_recvd[i]);
+                                printf("next n_recvd: %s", n_recvd[i] + 1);
                             }
                             break;
                         case 'P': // Postprocessing procedure 
