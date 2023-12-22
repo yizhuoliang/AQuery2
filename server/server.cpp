@@ -159,6 +159,7 @@ int dll_main(int argc, char** argv, Context* cxt){
                         switch(n_recvd[i][0]){
                         case 'Q': // SQL query for monetdbe
                             {
+                                // coulson notes: the add 1 is for skipping the "Q" character
                                 server->exec(n_recvd[i] + 1);
                                 printf("Exec Q%d: %s", i, n_recvd[i]);
                                 printf("next n_recvd: %s", n_recvd[i] + 1);
