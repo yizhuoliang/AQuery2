@@ -321,6 +321,7 @@ class projection(ast_node):
             for key, val in proj_map.items():
                 col_name = 'col_' + base62uuid(6)
                 self.context.emitc(f'decltype(auto) {col_name} = {self.out_table.contextname_cpp}->get_col<{key}>();')
+                print("place 2")
                 gb_cexprs.append((col_name, val[2]))
             self.group_node.finalize(gb_cexprs, gb_vartable)
         else:
@@ -329,10 +330,11 @@ class projection(ast_node):
                     self.context.emitc(
                         f'{self.out_table.contextname_cpp}->get_col<{key}>().initfrom({vid2cname[val[1]]}, "{cols[i].name}");'
                     )
-                    print("wowowo!")
+                    print("place C")
                 else:
                     # for funcs evaluate f_i(x, ...)
                     self.context.emitc(f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]};')
+                    print("place A")
         # print out col_is
         if 'into' not in node:
             self.context.emitc(f'print(*{self.out_table.contextname_cpp});')
