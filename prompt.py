@@ -429,6 +429,7 @@ def prompt(running = lambda:True, next = lambda:input('> '), state = None):
                     print(payload)
                     try:
                         state.send(sz, payload)
+                        print("sent")
                     except TypeError as e:
                         print("Couslon: yeah, an error")
                         print(e)
