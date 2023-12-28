@@ -287,6 +287,7 @@ struct TableInfo {
 
 	template <size_t i = 0>
 	auto& get_col() {
+		printf("Place F\n");
 		return *reinterpret_cast<ColRef<std::tuple_element_t <i, tuple_type>>*>(colrefs + i);
 	}
 

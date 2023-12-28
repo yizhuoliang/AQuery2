@@ -45,7 +45,7 @@ void TableInfo<Ts ...>::monetdb_append_table(void* srv, const char* alt_name) {
 	puts("getcols...");
 	uint32_t cnt = 0;
 	const auto get_col = [&monetdbe_cols, &i, *this, &gc_vecs, &cnt](auto v) {
-		printf("%d %d\n", i, (ColRef<void>*)v - colrefs);
+		printf("Place E: %d %d\n", i, (ColRef<void>*)v - colrefs);
 		monetdbe_cols[i++] = (monetdbe_column*)v->monetdb_get_col(gc_vecs, cnt);
 	};
 	(get_col((ColRef<Ts>*)(colrefs + i)), ...);
