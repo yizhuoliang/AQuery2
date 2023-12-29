@@ -265,11 +265,12 @@ class projection(ast_node):
         typenames = [c[1] for c in col_exprs] + [c.type for c in self.col_ext]
         length_name = 'len_' + base62uuid(6)
         self.context.emitc(f'auto {length_name} = server->cnt;')
-        
+        self.context.emitc('auto start = std::chrono::high_resolution_clock::now();')
         for v, idx in self.var_table.items():
             vname = get_legal_name(v) + '_' + base62uuid(3)
             self.pyname2cname[v] = vname
             self.context.emitc(f'auto {vname} = ColRef<{typenames[idx].cname}>({length_name}, server->getCol({idx}));')
+            self.context.emitc('std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() << " ms\\n";')
             vid2cname[idx] = vname
         # Create table into context
         out_typenames = [None] * len(proj_map)
@@ -314,7 +315,6 @@ class projection(ast_node):
         self.context.emitc(f'auto {self.out_table.contextname_cpp} = new TableInfo<{",".join(out_typenames)}>("{self.out_table.table_name}", {self.outtable_col_names});')
         # TODO: Inject custom group by code here and flag them in proj_map
         # Type of UDFs? Complex UDFs, ones with static vars?
-        self.context.emitc('auto start = std::chrono::high_resolution_clock::now();')
         num_threads = 0
         if self.group_node is not None and self.group_node.use_sp_gb:
             gb_vartable : Dict[str, Union[str, int]] = deepcopy(self.pyname2cname)
