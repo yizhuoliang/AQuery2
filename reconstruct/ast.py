@@ -314,6 +314,7 @@ class projection(ast_node):
         self.context.emitc(f'auto {self.out_table.contextname_cpp} = new TableInfo<{",".join(out_typenames)}>("{self.out_table.table_name}", {self.outtable_col_names});')
         # TODO: Inject custom group by code here and flag them in proj_map
         # Type of UDFs? Complex UDFs, ones with static vars?
+        self.context.emitc('auto start = std::chrono::high_resolution_clock::now();')
         num_threads = 0
         if self.group_node is not None and self.group_node.use_sp_gb:
             gb_vartable : Dict[str, Union[str, int]] = deepcopy(self.pyname2cname)
@@ -340,8 +341,18 @@ class projection(ast_node):
                    f'}});')
                     num_threads += 1
                     print("place A")
+                self.context.emitc('''
+auto end = std::chrono::high_resolution_clock::now();
+std::chrono::duration<double, std::milli> elapsed = end - start;
+std::cout << "Time elapsed: " << elapsed.count() << " ms\\n";
+''')
         for i in range(num_threads):
             self.context.emitc(f'thread_{i}.join();')
+        self.context.emitc('''
+auto end = std::chrono::high_resolution_clock::now();
+std::chrono::duration<double, std::milli> elapsed = end - start;
+std::cout << "Time elapsed: " << elapsed.count() << " ms\\n";
+''')
         # print out col_is
         if 'into' not in node:
             self.context.emitc(f'print(*{self.out_table.contextname_cpp});')
