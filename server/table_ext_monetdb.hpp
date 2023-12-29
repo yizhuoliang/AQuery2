@@ -86,6 +86,7 @@ void TableInfo<Ts ...>::monetdb_append_table(void* srv, const char* alt_name) {
 
 template<class Type>
 void* ColRef<Type>::monetdb_get_col(void** gc_vecs, uint32_t& cnt) {
+	auto start = std::chrono::high_resolution_clock::now();
 	auto aq_type = AQType_2_monetdbe[types::Types<Type>::getType()];
 	monetdbe_column* col = (monetdbe_column*)malloc(sizeof(monetdbe_column));
 
@@ -100,6 +101,10 @@ void* ColRef<Type>::monetdb_get_col(void** gc_vecs, uint32_t& cnt) {
 	// 	}
 	// 	gc_vecs[cnt++] = arr;
 	// }
+
+	auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "Function execution time: " << duration.count() << " milliseconds" << std::endl;
 	return col;
 }
 
