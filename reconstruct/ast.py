@@ -341,18 +341,12 @@ class projection(ast_node):
                    f'}});')
                     num_threads += 1
                     print("place A")
-                self.context.emitc('''
-auto end = std::chrono::high_resolution_clock::now();
-std::chrono::duration<double, std::milli> elapsed = end - start;
-std::cout << "Time elapsed: " << elapsed.count() << " ms\\n";
-''')
+                self.context.emitc('std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() << " ms\\n";')
+
         for i in range(num_threads):
             self.context.emitc(f'thread_{i}.join();')
-        self.context.emitc('''
-auto end = std::chrono::high_resolution_clock::now();
-std::chrono::duration<double, std::milli> elapsed = end - start;
-std::cout << "Time elapsed: " << elapsed.count() << " ms\\n";
-''')
+        self.context.emitc('std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() << " ms\\n";')
+
         # print out col_is
         if 'into' not in node:
             self.context.emitc(f'print(*{self.out_table.contextname_cpp});')
