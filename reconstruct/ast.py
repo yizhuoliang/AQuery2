@@ -356,6 +356,7 @@ class projection(ast_node):
 
         if 'into' in node:
             self.context.emitc(select_into(self, node['into']).ccode)
+            self.context.emitc('std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() << " ms\\n";')
         if not self.distinct:
             self.finalize()
             
