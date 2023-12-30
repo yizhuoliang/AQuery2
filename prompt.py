@@ -424,14 +424,10 @@ def prompt(running = lambda:True, next = lambda:input('> '), state = None):
                     sz = len(qs)
                     payload = (ctypes.c_char_p*sz)(*qs)
                     state.payload = payload
-                    print("Payload info:")
-                    print(type(payload))
-                    print(payload)
                     try:
                         state.send(sz, payload)
                         print("sent")
                     except TypeError as e:
-                        print("Couslon: yeah, an error")
                         print(e)
                 state.currstats.codegen_time = state.currstats.stop()
                 state.currstats.compile_time = 0

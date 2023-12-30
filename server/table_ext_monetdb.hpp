@@ -93,6 +93,7 @@ void* ColRef<Type>::monetdb_get_col(void** gc_vecs, uint32_t& cnt) {
 	col->count = this->size;
 	col->data = this->container;
 	col->name = const_cast<char*>(this->name);
+	printf("%s: %p\n", col->name, col);
 	// auto arr = (types::timestamp_t*) malloc (sizeof(types::timestamp_t)* this->size);
 	// if constexpr (is_vector_type<Type>){
 	// 	for(uint32_t i = 0; i < this->size; ++i){
