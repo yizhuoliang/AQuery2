@@ -326,7 +326,7 @@ class projection(ast_node):
                 gb_cexprs.append((col_name, val[2]))
             self.group_node.finalize(gb_cexprs, gb_vartable)
         else:
-            if os.environ.get("THREAD_AGG") == 1:
+            if os.environ.get("THREAD_AGG") == '1':
                 num_threads = 0
                 for i, (key, val) in enumerate(proj_map.items()):
                     if type(val[1]) is int:
