@@ -43,6 +43,10 @@ int n_recv = 0;
 char** n_recvd = nullptr;
 
 extern "C" void __DLLEXPORT__ receive_args(int argc, char**argv){
+    printf("server received %d arguments:\n", argc);
+    for(int i = 0; i < argc; i++) {
+        printf("%s\n", argv[i]);
+    }
     n_recv = argc;
     n_recvd = argv;
 }
@@ -161,11 +165,11 @@ int dll_main(int argc, char** argv, Context* cxt){
                             {
                                 // coulson notes: the add 1 is for skipping the "Q" character
                                 server->exec(n_recvd[i] + 1);
-                                printf("Sever Exec monetdb Q%d: %s", i, n_recvd[i]);
+                                printf("Server Exec monetdb Q%d: %s", i, n_recvd[i]);
                             }
                             break;
                         case 'P': // Postprocessing procedure 
-                            printf("Sever ostprocessing: %s", n_recvd[i]);
+                            printf("Server postprocessing: %s", n_recvd[i]);
                             if(handle && !server->haserror()) {
                                 code_snippet c = reinterpret_cast<code_snippet>(dlsym(handle, n_recvd[i]+1));
                                 c(cxt);
@@ -173,7 +177,7 @@ int dll_main(int argc, char** argv, Context* cxt){
                             break;
                         case 'M': // Load Module
                             {   
-                                printf("Sever load module: %s", n_recvd[i]);
+                                printf("Server load module: %s", n_recvd[i]);
                                 auto mname = n_recvd[i] + 1;
                                 user_module_handle = dlopen(mname, RTLD_LAZY);
                                 //getlasterror

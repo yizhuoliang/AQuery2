@@ -426,7 +426,7 @@ def prompt(running = lambda:True, next = lambda:input('> '), state = None):
                     state.payload = payload
                     try:
                         state.send(sz, payload)
-                        print("sent")
+                        print("FRONT END SENT EXECUTION PLAN TO SERVER!!!")
                     except TypeError as e:
                         print(e)
                 state.currstats.codegen_time = state.currstats.stop()
