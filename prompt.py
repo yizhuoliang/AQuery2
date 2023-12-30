@@ -411,7 +411,7 @@ def prompt(running = lambda:True, next = lambda:input('> '), state = None):
             elif q.startswith('xexec') or q.startswith('exec'): # generate build and run (MonetDB Engine)
                 state.cfg.backend_type = Backend_Type.BACKEND_MonetDB.value
                 cxt = xengine.exec(state.stmts, cxt, keep)
-                
+                print("engine.exec finished")
                 this_udf = cxt.finalize_udf()
                 if this_udf:
                     with open('udf.hpp', 'wb') as outfile:

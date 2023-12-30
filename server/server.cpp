@@ -161,18 +161,19 @@ int dll_main(int argc, char** argv, Context* cxt){
                             {
                                 // coulson notes: the add 1 is for skipping the "Q" character
                                 server->exec(n_recvd[i] + 1);
-                                printf("Exec Q%d: %s", i, n_recvd[i]);
-                                printf("next n_recvd: %s", n_recvd[i] + 1);
+                                printf("Sever Exec monetdb Q%d: %s", i, n_recvd[i]);
                             }
                             break;
                         case 'P': // Postprocessing procedure 
+                            printf("Sever ostprocessing: %s", n_recvd[i]);
                             if(handle && !server->haserror()) {
                                 code_snippet c = reinterpret_cast<code_snippet>(dlsym(handle, n_recvd[i]+1));
                                 c(cxt);
                             }
                             break;
                         case 'M': // Load Module
-                            {
+                            {   
+                                printf("Sever load module: %s", n_recvd[i]);
                                 auto mname = n_recvd[i] + 1;
                                 user_module_handle = dlopen(mname, RTLD_LAZY);
                                 //getlasterror
