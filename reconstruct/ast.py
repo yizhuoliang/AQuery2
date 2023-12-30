@@ -6,6 +6,7 @@ from typing import Set, Tuple, Dict, Union, List, Optional
 from engine.types import *
 from engine.utils import enlist, base62uuid, base62alp, get_legal_name
 from reconstruct.storage import Context, TableInfo, ColRef
+import os
     
 class ast_node:
     header = []
@@ -315,7 +316,6 @@ class projection(ast_node):
         self.context.emitc(f'auto {self.out_table.contextname_cpp} = new TableInfo<{",".join(out_typenames)}>("{self.out_table.table_name}", {self.outtable_col_names});')
         # TODO: Inject custom group by code here and flag them in proj_map
         # Type of UDFs? Complex UDFs, ones with static vars?
-        num_threads = 0
         if self.group_node is not None and self.group_node.use_sp_gb:
             gb_vartable : Dict[str, Union[str, int]] = deepcopy(self.pyname2cname)
             gb_cexprs : List[str] = []
@@ -323,29 +323,39 @@ class projection(ast_node):
             for key, val in proj_map.items():
                 col_name = 'col_' + base62uuid(6)
                 self.context.emitc(f'decltype(auto) {col_name} = {self.out_table.contextname_cpp}->get_col<{key}>();')
-                print("place B")
                 gb_cexprs.append((col_name, val[2]))
             self.group_node.finalize(gb_cexprs, gb_vartable)
         else:
-            for i, (key, val) in enumerate(proj_map.items()):
-                if type(val[1]) is int:
-                    self.context.emitc(
-                        f'{self.out_table.contextname_cpp}->get_col<{key}>().initfrom({vid2cname[val[1]]}, "{cols[i].name}");'
-                    )
-                    print("place C")
-                else:
-                    # for funcs evaluate f_i(x, ...)
-                    # self.context.emitc(f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]};')
-                    self.context.emitc(f'std::thread thread_{key}([&]() {{ '
-                   f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]}; '
-                   f'}});')
-                    num_threads += 1
-                    print("place A")
+            if os.environ.get("THREAD_AGG") == 1:
+                num_threads = 0
+                for i, (key, val) in enumerate(proj_map.items()):
+                    if type(val[1]) is int:
+                        self.context.emitc(
+                            f'{self.out_table.contextname_cpp}->get_col<{key}>().initfrom({vid2cname[val[1]]}, "{cols[i].name}");'
+                        )
+                    else:
+                        # for funcs evaluate f_i(x, ...)
+                        # self.context.emitc(f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]};')
+                        self.context.emitc(f'std::thread thread_{key}([&]() {{ '
+                    f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]}; '
+                    f'}});')
+                        num_threads += 1
+                        print("place A")
                 self.context.emitc('std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() << " ms\\n";')
-
-        for i in range(num_threads):
-            self.context.emitc(f'thread_{i}.join();')
-        self.context.emitc('std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() << " ms\\n";')
+                for i in range(num_threads):
+                    self.context.emitc(f'thread_{i}.join();')
+                self.context.emitc('std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() << " ms\\n";')
+            else:
+                self.context.emitc('std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() << " ms\\n";')
+                for i, (key, val) in enumerate(proj_map.items()):
+                    if type(val[1]) is int:
+                        self.context.emitc(
+                            f'{self.out_table.contextname_cpp}->get_col<{key}>().initfrom({vid2cname[val[1]]}, "{cols[i].name}");'
+                        )
+                    else:
+                        # for funcs evaluate f_i(x, ...)
+                        self.context.emitc(f'{self.out_table.contextname_cpp}->get_col<{key}>() = {val[1]};')
+                self.context.emitc('std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() << " ms\\n";')
 
         # print out col_is
         if 'into' not in node:
