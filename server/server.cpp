@@ -45,7 +45,7 @@ char** n_recvd = nullptr;
 extern "C" void __DLLEXPORT__ receive_args(int argc, char**argv){
     printf("server received %d arguments:\n", argc);
     for(int i = 0; i < argc; i++) {
-        printf("%s\n", argv[i]);
+        printf("%s", argv[i]);
     }
     n_recv = argc;
     n_recvd = argv;
@@ -169,7 +169,7 @@ int dll_main(int argc, char** argv, Context* cxt){
                             }
                             break;
                         case 'P': // Postprocessing procedure 
-                            printf("Server postprocessing: %s", n_recvd[i]);
+                            printf("Server load/exec generated cpp: %s", n_recvd[i]);
                             if(handle && !server->haserror()) {
                                 code_snippet c = reinterpret_cast<code_snippet>(dlsym(handle, n_recvd[i]+1));
                                 c(cxt);
