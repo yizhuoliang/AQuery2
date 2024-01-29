@@ -76,9 +76,10 @@ There're multiple options to run AQuery on Windows. But for better consistency I
 - Because I can't get access to an arm-based mac to fully test this setup, there might still be issues. Please open an issue if you encounter any problems.
   
 ### Linux
-- Install monetdb, see [Monetdb Easy Setup](https://www.monetdb.org/easy-setup/) for instructions.
-- Install python3, C++ compiler and git. (For Ubuntu, run `apt update && apt install -y python3 python3-pip clang-14 libmonetdbe-dev git `)
+- Install monetdb, see [Monetdb Easy Setup](https://www.monetdb.org/easy-setup/) for instructions. Or use the install script `monetdb_install.sh`
+- Install python3, C++ compiler and git. (For Ubuntu, run `apt update && apt install -y python3 python3-pip clang-14 libmonetdbe-dev libmonetdb-client-dev monetdb5-sql-dev git `)
 - Install required python packages by `python3 -m pip install -r requirements.txt`
+- Run the duckdb installation script `duckdb_install.py`
 - If you have multiple C++ compilers on the system. Specify C++ compiler by setting the **CXX** environment variable. e.g. `export CXX=clang++-14`
 - Note for anaconda users: the system libraries included in anaconda might differ from the ones your compiler is using. In this case, you might get errors similar to: 
   >ImportError: libstdc++.so.6: version `GLIBCXX_3.4.26' not found 
