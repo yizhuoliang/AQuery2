@@ -295,6 +295,7 @@ start:
                             break;
                         case 'P': // Postprocessing procedure 
                             if(handle && !server->haserror()) {
+                                printf("Server load/exec generated cpp: %s", n_recvd[i]);
                                 if (procedure_recording) {
                                     recorded_queries.emplace_back(copy_lpstr(n_recvd[i]));
                                 }
