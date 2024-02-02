@@ -77,7 +77,7 @@ There're multiple options to run AQuery on Windows. But for better consistency I
   
 ### Linux
 - Install monetdb, see [Monetdb Easy Setup](https://www.monetdb.org/easy-setup/) for instructions. Or use the install script `monetdb_install.sh`
-- Install python3, C++ compiler and git. (For Ubuntu, run `apt update && apt install -y python3 python3-pip clang-14 libmonetdbe-dev libmonetdb-client-dev monetdb5-sql-dev git `)
+- Install python3, C++ compiler and git. (For Ubuntu, run `apt update && apt install -y python3 python3-pip clang-14 libssl-dev libmonetdbe-dev libmonetdb-client-dev monetdb5-sql-dev git `)
 - Install required python packages by `python3 -m pip install -r requirements.txt`
 - Run the duckdb installation script `duckdb_install.py`
 - If you have multiple C++ compilers on the system. Specify C++ compiler by setting the **CXX** environment variable. e.g. `export CXX=clang++-14`
